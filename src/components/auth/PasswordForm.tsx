@@ -43,7 +43,7 @@ export function PasswordForm({ onSubmit, isLoading, error, isLocked, lockoutMinu
               className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 text-xl focus:outline-none focus:border-woohwa-green disabled:bg-gray-50 disabled:text-gray-400"
               autoComplete="off"
             />
-            <p className="text-base text-gray-400 mt-2">입력하신 내용이 그대로 표시됩니다</p>
+            <p className="text-base text-gray-600 mt-2">입력하신 내용이 그대로 표시됩니다</p>
           </div>
 
           {error && (
@@ -76,7 +76,7 @@ export function PasswordForm({ onSubmit, isLoading, error, isLocked, lockoutMinu
         <div className="mt-8 text-center">
           <a
             href="/admin"
-            className="text-sm text-gray-400 hover:text-gray-600 underline"
+            className="text-base text-gray-500 hover:text-gray-700 underline py-2 inline-block"
           >
             관리자 로그인
           </a>

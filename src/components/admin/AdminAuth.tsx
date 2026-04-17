@@ -54,7 +54,7 @@ export function AdminAuth({ isVerifying, error }: AdminAuthProps) {
           </button>
         )}
 
-        <p className="text-center text-sm text-gray-400 mt-4">
+        <p className="text-center text-base text-gray-500 mt-4">
           관리자 이메일로만 접근 가능합니다
         </p>
       </div>

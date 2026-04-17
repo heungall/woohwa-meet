@@ -41,7 +41,7 @@ export function ReservationModal({
 
         <div className="p-6 space-y-4">
           <div>
-            <span className="text-base text-gray-500">예약자</span>
+            <span className="text-base text-gray-600 font-medium">예약자</span>
             <p className="text-lg font-semibold text-gray-900 mt-1">{coachName} 코치</p>
           </div>
 
@@ -57,8 +57,8 @@ export function ReservationModal({
           </div>
 
           <div>
-            <label htmlFor="carNumber" className="block text-base text-gray-500 mb-1">
-              차량번호 <span className="text-sm text-gray-400">(선택사항)</span>
+            <label htmlFor="carNumber" className="block text-base text-gray-600 font-medium mb-1">
+              차량번호 <span className="text-base text-gray-500">(선택사항)</span>
             </label>
             <input
               id="carNumber"
@@ -71,9 +71,9 @@ export function ReservationModal({
               placeholder="예: 12가3456"
               className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-lg focus:outline-none focus:border-woohwa-green"
             />
-            {carError && <p className="text-sm text-red-500 mt-1">{carError}</p>}
+            {carError && <p className="text-base text-red-600 mt-1">{carError}</p>}
             {lastCarNumber && (
-              <p className="text-sm text-gray-400 mt-1">이전 차량번호: {lastCarNumber}</p>
+              <p className="text-base text-gray-600 mt-1">이전 차량번호: {lastCarNumber}</p>
             )}
           </div>
         </div>
@@ -82,14 +82,14 @@ export function ReservationModal({
           <button
             onClick={onCancel}
             disabled={isLoading}
-            className="flex-1 py-4 rounded-xl border-2 border-gray-200 text-lg font-medium text-gray-700 min-h-touch hover:bg-gray-50 transition-colors disabled:opacity-50"
+            className="w-1/3 py-4 rounded-xl border-2 border-gray-200 text-lg font-medium text-gray-700 min-h-touch hover:bg-gray-50 transition-colors disabled:opacity-50"
           >
             취소
           </button>
           <button
             onClick={handleConfirm}
             disabled={isLoading}
-            className="flex-1 py-4 rounded-xl bg-woohwa-green text-white text-lg font-bold min-h-touch hover:bg-woohwa-green-dark transition-colors disabled:opacity-50"
+            className="w-2/3 py-4 rounded-xl bg-woohwa-green text-white text-lg font-bold min-h-touch hover:bg-woohwa-green-dark transition-colors disabled:opacity-50"
           >
             {isLoading ? <LoadingSpinner size="sm" /> : '예약하기'}
           </button>

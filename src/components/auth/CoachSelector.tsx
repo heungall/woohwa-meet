@@ -103,19 +103,26 @@ export function CoachSelector({
             <label htmlFor="coach" className="block text-lg font-medium text-gray-700 mb-2">
               이름
             </label>
-            <select
-              id="coach"
-              value={selectedId}
-              onChange={(e) => setSelectedId(e.target.value)}
-              className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 text-xl focus:outline-none focus:border-woohwa-green appearance-none bg-white"
-            >
-              <option value="">선택해주세요</option>
-              {activeCoaches.map((coach) => (
-                <option key={coach.id} value={coach.id}>
-                  {coach.name}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                id="coach"
+                value={selectedId}
+                onChange={(e) => setSelectedId(e.target.value)}
+                className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 text-xl focus:outline-none focus:border-woohwa-green appearance-none bg-white pr-12"
+              >
+                <option value="">선택해주세요</option>
+                {activeCoaches.map((coach) => (
+                  <option key={coach.id} value={coach.id}>
+                    {coach.name}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center">
+                <svg className="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
           </div>
 
           <button

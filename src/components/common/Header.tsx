@@ -12,7 +12,7 @@ export function Header({ coachName, onLogout }: HeaderProps) {
             <span className="text-white text-lg">🦋</span>
           </div>
           <span className="font-bold text-xl text-gray-900">WOOHWA</span>
-          <span className="text-gray-400 text-base hidden sm:inline">상담실 예약</span>
+          <span className="text-gray-500 text-base">상담실 예약</span>
         </div>
 
         {coachName && onLogout && (
@@ -22,7 +22,7 @@ export function Header({ coachName, onLogout }: HeaderProps) {
             </span>
             <button
               onClick={onLogout}
-              className="text-sm text-gray-500 hover:text-gray-700 underline min-h-touch px-2 flex items-center"
+              className="text-base text-gray-500 hover:text-gray-700 underline min-h-touch px-2 flex items-center"
             >
               로그아웃
             </button>

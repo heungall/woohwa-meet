@@ -15,10 +15,10 @@ export default {
         sans: ['Noto Sans KR', '-apple-system', 'sans-serif'],
       },
       fontSize: {
-        base: '16px',
-        lg: '18px',
-        xl: '20px',
-        '2xl': '24px',
+        base: ['16px', { lineHeight: '1.75rem' }],
+        lg:   ['18px', { lineHeight: '2rem'    }],
+        xl:   ['20px', { lineHeight: '2.25rem' }],
+        '2xl':['24px', { lineHeight: '2.5rem'  }],
       },
       minHeight: {
         touch: '44px',
