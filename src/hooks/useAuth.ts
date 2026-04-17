@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from 'react'
-import type { AuthSession } from '../types/coach'
-import type { Coach } from '../types/coach'
+import type { AuthSession, Coach } from '../types/coach'
 import { getSession, saveSession, clearSession, isLockedOut, recordLoginFailure, resetLoginAttempts, getLockoutRemainingMinutes, getRemainingAttempts } from '../services/auth'
 import { authApi } from '../services/api'
 
 interface UseAuthReturn {
   session: AuthSession | null
   coaches: Coach[]
+  passwordVerified: boolean
   isLoading: boolean
   error: string | null
   isLocked: boolean
@@ -22,36 +22,29 @@ interface UseAuthReturn {
 export function useAuth(): UseAuthReturn {
   const [session, setSession] = useState<AuthSession | null>(getSession)
   const [coaches, setCoaches] = useState<Coach[]>([])
+  const [passwordVerified, setPasswordVerified] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLocked, setIsLocked] = useState(isLockedOut)
   const [lockoutMinutes, setLockoutMinutes] = useState(getLockoutRemainingMinutes)
   const [remainingAttempts, setRemainingAttempts] = useState(getRemainingAttempts)
-  const [passwordVerified, setPasswordVerified] = useState(false)
   const [needsPhoneVerification, setNeedsPhoneVerification] = useState(false)
   const [pendingCoachId, setPendingCoachId] = useState<string | null>(null)
 
   useEffect(() => {
-    if (isLocked) {
-      const interval = setInterval(() => {
-        if (!isLockedOut()) {
-          setIsLocked(false)
-          setLockoutMinutes(0)
-          setRemainingAttempts(getRemainingAttempts())
-          clearInterval(interval)
-        } else {
-          setLockoutMinutes(getLockoutRemainingMinutes())
-        }
-      }, 10000)
-      return () => clearInterval(interval)
-    }
+    if (!isLocked) return
+    const interval = setInterval(() => {
+      if (!isLockedOut()) {
+        setIsLocked(false)
+        setLockoutMinutes(0)
+        setRemainingAttempts(getRemainingAttempts())
+        clearInterval(interval)
+      } else {
+        setLockoutMinutes(getLockoutRemainingMinutes())
+      }
+    }, 10000)
+    return () => clearInterval(interval)
   }, [isLocked])
-
-  useEffect(() => {
-    if (passwordVerified && coaches.length === 0) {
-      authApi.getCoaches().then(setCoaches).catch(() => {})
-    }
-  }, [passwordVerified, coaches.length])
 
   const verifyPassword = useCallback(async (password: string): Promise<boolean> => {
     if (isLockedOut()) {
@@ -65,12 +58,7 @@ export function useAuth(): UseAuthReturn {
 
     try {
       const result = await authApi.verifyPassword(password)
-      if (result.verified) {
-        resetLoginAttempts()
-        setPasswordVerified(true)
-        setRemainingAttempts(MAX_ATTEMPTS_DISPLAY)
-        return true
-      } else {
+      if (!result.verified) {
         recordLoginFailure()
         const remaining = getRemainingAttempts()
         setRemainingAttempts(remaining)
@@ -83,8 +71,16 @@ export function useAuth(): UseAuthReturn {
         }
         return false
       }
-    } catch {
-      setError('요청을 처리할 수 없습니다. 잠시 후 다시 시도해주세요.')
+
+      // 비밀번호 확인 즉시 코치 목록도 로드
+      resetLoginAttempts()
+      const coachList = await authApi.getCoaches()
+      setCoaches(coachList)
+      setPasswordVerified(true)
+      return true
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : '요청을 처리할 수 없습니다. 잠시 후 다시 시도해주세요.'
+      setError(msg)
       return false
     } finally {
       setIsLoading(false)
@@ -136,6 +132,7 @@ export function useAuth(): UseAuthReturn {
   return {
     session,
     coaches,
+    passwordVerified,
     isLoading,
     error,
     isLocked,
@@ -148,5 +145,3 @@ export function useAuth(): UseAuthReturn {
     pendingCoachId,
   }
 }
-
-const MAX_ATTEMPTS_DISPLAY = 5

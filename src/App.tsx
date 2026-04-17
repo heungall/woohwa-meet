@@ -28,7 +28,7 @@ export default function App() {
 type MainTab = 'reservation' | 'guide'
 
 function UserApp() {
-  const { session, coaches, isLoading, error, isLocked, lockoutMinutes, remainingAttempts, verifyPassword, selectCoach, logout, needsPhoneVerification, pendingCoachId } = useAuth()
+  const { session, coaches, passwordVerified, isLoading, error, isLocked, lockoutMinutes, remainingAttempts, verifyPassword, selectCoach, logout, needsPhoneVerification, pendingCoachId } = useAuth()
   const [tab, setTab] = useState<MainTab>('reservation')
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [selectedSlots, setSelectedSlots] = useState<Array<{ date: string; time: string; room: 1 | 2 | 3 }>>([])
@@ -39,7 +39,7 @@ function UserApp() {
   const { slots, isLoading: slotsLoading, weekStart, setWeekStart, createReservation, cancelReservation } = useReservations(session?.coachId ?? '')
 
   if (!session?.authenticated) {
-    if (coaches.length === 0) {
+    if (!passwordVerified) {
       return (
         <PasswordForm
           onSubmit={verifyPassword}
