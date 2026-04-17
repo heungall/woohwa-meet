@@ -155,7 +155,7 @@ function adminUpdatePassword(token, newPassword) {
   const keyCol = headers.indexOf('key');
   const valCol = headers.indexOf('value');
 
-  const newHash = hashPassword(newPassword);
+  const newHash = hashPassword(String(newPassword).toLowerCase().trim());
   for (let i = 1; i < data.length; i++) {
     if (data[i][keyCol] === 'userPasswordHash') {
       sheet.getRange(i + 1, valCol + 1).setValue(newHash);

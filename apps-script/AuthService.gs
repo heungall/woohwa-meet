@@ -6,7 +6,7 @@ function verifyPassword(password) {
   const setting = rows.find(r => r.key === 'userPasswordHash');
   if (!setting) return false;
 
-  const inputHash = hashPassword(escapeStr(password));
+  const inputHash = hashPassword(escapeStr(String(password).toLowerCase().trim()));
   return inputHash === setting.value;
 }
 
