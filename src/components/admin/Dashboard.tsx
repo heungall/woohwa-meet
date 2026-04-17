@@ -98,6 +98,8 @@ function ReservationList({ token }: { token: string }) {
   const active = filtered.filter((r) => r.status === 'active')
   const todayCount = active.filter((r) => isToday(parseISO(r.date))).length
 
+  const [copied, setCopied] = useState(false)
+
   const exportCsv = () => {
     const rows = [
       ['날짜', '시간', '상담실', '이름', '연락처', '차량번호', '예약일시'].join(','),
@@ -111,6 +113,17 @@ function ReservationList({ token }: { token: string }) {
     a.href = url
     a.download = `예약현황_${format(new Date(), 'yyyyMMdd')}.csv`
     a.click()
+  }
+
+  const copyToClipboard = () => {
+    const header = ['날짜', '시간', '상담실', '이름', '연락처', '차량번호'].join('\t')
+    const rows = active.map((r) =>
+      [r.date, r.time, `상담실 ${r.room}`, r.name, r.phone ?? '-', r.carNumber ?? '-'].join('\t')
+    )
+    navigator.clipboard.writeText([header, ...rows].join('\n')).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
   }
 
   if (isLoading) return <LoadingSpinner size="lg" />
@@ -144,6 +157,12 @@ function ReservationList({ token }: { token: string }) {
           className="px-4 py-2 bg-white border-2 border-gray-200 rounded-xl text-base font-medium hover:bg-gray-50 min-h-touch"
         >
           CSV 내보내기
+        </button>
+        <button
+          onClick={copyToClipboard}
+          className="px-4 py-2 bg-white border-2 border-gray-200 rounded-xl text-base font-medium hover:bg-gray-50 min-h-touch"
+        >
+          {copied ? '복사됨 ✓' : '복사하기'}
         </button>
       </div>
 
