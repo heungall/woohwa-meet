@@ -181,7 +181,7 @@ WOOHWA Green Dark: #86A934
 | 보조 텍스트 | `text-base text-gray-600` 이상 — `text-sm`, `gray-400` 사용 금지 |
 | 에러 메시지 | `text-base text-red-600` |
 | 드롭다운 | `appearance-none` 사용 시 반드시 커스텀 화살표 SVG 오버레이 추가 |
-| 모달 버튼 | 주 행동(오른쪽) / 보조 행동(왼쪽 텍스트 링크) 구분 |
+| 모달 버튼 | 예약하기(왼쪽 w-2/3) / 취소(오른쪽 w-1/3) — 둘 다 버튼, flex gap-3 |
 | 헤더 | `whitespace-nowrap` + `truncate` + `shrink-0` 조합으로 한 줄 유지 |
 | 캘린더 슬롯 | `h-12`(48px), `text-sm font-semibold`, 상태별 명확한 배경색 |
 | 코치 선택 | 드롭다운 유지 (코치 ~50명), 화살표 SVG 필수 |
