@@ -166,12 +166,25 @@ WOOHWA Green:      #9BC53D
 WOOHWA Green Dark: #86A934
 배경:              #FBF9F7 (크림)
 
-최소 터치 타겟: 44px
+최소 터치 타겟: 44px (min-h-touch / min-w-touch 커스텀 토큰)
 기본 폰트:      16px (text-base) 이상
-중요 버튼:      18~20px, py-4~5
+중요 버튼:      text-lg~xl, py-4~5
+행간:           fontSize 토큰에 lineHeight 명시 (tailwind.config.js)
 ```
 
 **우선순위**: 사용성 > 보안 > 성능 > 기능
+
+### UI 컨벤션 (50~60대 모바일 기준)
+
+| 항목 | 규칙 |
+|------|------|
+| 보조 텍스트 | `text-base text-gray-600` 이상 — `text-sm`, `gray-400` 사용 금지 |
+| 에러 메시지 | `text-base text-red-600` |
+| 드롭다운 | `appearance-none` 사용 시 반드시 커스텀 화살표 SVG 오버레이 추가 |
+| 모달 버튼 | 주 행동(오른쪽) / 보조 행동(왼쪽 텍스트 링크) 구분 |
+| 헤더 | `whitespace-nowrap` + `truncate` + `shrink-0` 조합으로 한 줄 유지 |
+| 캘린더 슬롯 | `h-12`(48px), `text-sm font-semibold`, 상태별 명확한 배경색 |
+| 코치 선택 | 드롭다운 유지 (코치 ~50명), 화살표 SVG 필수 |
 
 ---
 
