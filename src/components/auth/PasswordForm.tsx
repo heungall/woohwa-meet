@@ -24,13 +24,13 @@ export function PasswordForm({ onSubmit, isLoading, error, isLocked, lockoutMinu
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-8">
         <div className="text-center mb-8">
           <div className="text-5xl mb-3">🦋</div>
-          <h1 className="text-2xl font-bold text-gray-900">WOOHWA</h1>
-          <p className="text-base text-gray-500 mt-1">상담실 예약 시스템</p>
+          <h1 className="text-3xl font-bold text-gray-900">WOOHWA</h1>
+          <p className="text-lg text-gray-500 mt-1">상담실 예약 시스템</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor="password" className="block text-base font-medium text-gray-700 mb-2">
+            <label htmlFor="password" className="block text-lg font-medium text-gray-700 mb-2">
               비밀번호
             </label>
             <input
@@ -40,26 +40,26 @@ export function PasswordForm({ onSubmit, isLoading, error, isLocked, lockoutMinu
               onChange={(e) => setPassword(e.target.value)}
               placeholder="비밀번호를 입력하세요"
               disabled={isLocked || isLoading}
-              className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-lg focus:outline-none focus:border-woohwa-green disabled:bg-gray-50 disabled:text-gray-400"
+              className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 text-xl focus:outline-none focus:border-woohwa-green disabled:bg-gray-50 disabled:text-gray-400"
               autoComplete="off"
             />
-            <p className="text-sm text-gray-400 mt-1">입력하신 내용이 그대로 표시됩니다</p>
+            <p className="text-base text-gray-400 mt-2">입력하신 내용이 그대로 표시됩니다</p>
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-red-600 text-base">
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-600 text-lg">
               {error}
             </div>
           )}
 
           {isLocked && (
-            <div className="bg-orange-50 border border-orange-200 rounded-xl p-3 text-orange-700 text-base">
+            <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 text-orange-700 text-lg">
               {lockoutMinutes}분 후 다시 시도해주세요.
             </div>
           )}
 
           {!isLocked && remainingAttempts < 5 && remainingAttempts > 0 && (
-            <p className="text-sm text-orange-500 text-center">
+            <p className="text-lg text-orange-500 text-center font-medium">
               남은 시도 횟수: {remainingAttempts}회
             </p>
           )}
@@ -67,7 +67,7 @@ export function PasswordForm({ onSubmit, isLoading, error, isLocked, lockoutMinu
           <button
             type="submit"
             disabled={isLocked || isLoading || !password.trim()}
-            className="w-full bg-woohwa-green text-white rounded-xl py-4 text-lg font-bold min-h-touch disabled:opacity-50 disabled:cursor-not-allowed hover:bg-woohwa-green-dark transition-colors"
+            className="w-full bg-woohwa-green text-white rounded-xl py-5 text-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-woohwa-green-dark transition-colors"
           >
             {isLoading ? <LoadingSpinner size="sm" /> : '입장하기'}
           </button>

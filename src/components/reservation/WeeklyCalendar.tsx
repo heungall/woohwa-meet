@@ -22,13 +22,13 @@ function slotLabel(slot: TimeSlotData, selected: boolean) {
 }
 
 function slotClass(status: TimeSlotData['status'], selected: boolean) {
-  const base = 'w-full h-10 rounded text-xs font-medium transition-all border-2 flex items-center justify-center px-1'
+  const base = 'w-full h-12 rounded text-sm font-semibold transition-all border-2 flex items-center justify-center px-1'
   if (selected) return `${base} bg-woohwa-green border-woohwa-green-dark text-white`
   switch (status) {
-    case 'available': return `${base} bg-white border-gray-200 hover:border-woohwa-green hover:bg-green-50 cursor-pointer`
-    case 'mine':      return `${base} bg-woohwa-green/20 border-woohwa-green text-woohwa-green-dark cursor-pointer`
-    case 'taken':     return `${base} bg-gray-100 border-gray-200 text-gray-500 cursor-default`
-    case 'blocked':   return `${base} bg-gray-200 border-gray-300 text-gray-400 cursor-default`
+    case 'available': return `${base} bg-white border-gray-300 hover:border-woohwa-green hover:bg-green-50 cursor-pointer`
+    case 'mine':      return `${base} bg-woohwa-green/30 border-woohwa-green text-woohwa-green-dark cursor-pointer`
+    case 'taken':     return `${base} bg-gray-200 border-gray-300 text-gray-600 cursor-default`
+    case 'blocked':   return `${base} bg-gray-300 border-gray-400 text-gray-500 cursor-default`
   }
 }
 
@@ -45,39 +45,39 @@ export function WeeklyCalendar({ slots, isLoading, weekStart, onWeekChange, onSl
   return (
     <div>
       {/* 주차 선택기 */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-5">
         <button
           onClick={() => onWeekChange(subWeeks(weekStart, 1))}
           disabled={!canNavigateBack(weekStart)}
-          className="px-4 py-2 rounded-xl border-2 border-gray-200 text-base font-medium min-h-[44px] disabled:opacity-30 disabled:cursor-not-allowed hover:border-woohwa-green transition-colors"
+          className="px-5 py-3 rounded-xl border-2 border-gray-200 text-lg font-medium min-h-[52px] disabled:opacity-30 disabled:cursor-not-allowed hover:border-woohwa-green transition-colors"
         >
           ◀ 이전
         </button>
 
         <div className="text-center">
-          <p className="text-base font-semibold text-gray-900">{formatWeekRange(weekStart)}</p>
+          <p className="text-lg font-bold text-gray-900">{formatWeekRange(weekStart)}</p>
         </div>
 
         <button
           onClick={() => onWeekChange(addWeeks(weekStart, 1))}
           disabled={!canNavigateForward(weekStart)}
-          className="px-4 py-2 rounded-xl border-2 border-gray-200 text-base font-medium min-h-[44px] disabled:opacity-30 disabled:cursor-not-allowed hover:border-woohwa-green transition-colors"
+          className="px-5 py-3 rounded-xl border-2 border-gray-200 text-lg font-medium min-h-[52px] disabled:opacity-30 disabled:cursor-not-allowed hover:border-woohwa-green transition-colors"
         >
           다음 ▶
         </button>
       </div>
 
       {/* 범례 */}
-      <div className="flex flex-wrap gap-3 mb-4 text-sm">
+      <div className="flex flex-wrap gap-4 mb-5 text-sm">
         {[
-          { color: 'bg-white border border-gray-300', label: '예약 가능' },
-          { color: 'bg-woohwa-green/20 border border-woohwa-green', label: '내 예약' },
-          { color: 'bg-gray-100 border border-gray-200', label: '예약됨' },
-          { color: 'bg-gray-200 border border-gray-300', label: '이용 불가' },
+          { color: 'bg-white border-2 border-gray-300', label: '예약 가능' },
+          { color: 'bg-woohwa-green/30 border-2 border-woohwa-green', label: '내 예약' },
+          { color: 'bg-gray-200 border-2 border-gray-300', label: '예약됨' },
+          { color: 'bg-gray-300 border-2 border-gray-400', label: '이용 불가' },
         ].map(({ color, label }) => (
-          <div key={label} className="flex items-center gap-1.5">
-            <div className={`w-4 h-4 rounded ${color}`} />
-            <span className="text-gray-600">{label}</span>
+          <div key={label} className="flex items-center gap-2">
+            <div className={`w-5 h-5 rounded ${color}`} />
+            <span className="text-base text-gray-700 font-medium">{label}</span>
           </div>
         ))}
       </div>
@@ -87,27 +87,24 @@ export function WeeklyCalendar({ slots, isLoading, weekStart, onWeekChange, onSl
       ) : (
         <div className="bg-white rounded-xl border-2 border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
-            {/* 각 호실 열 최소 48px → 한글 3자 충분히 표시 */}
-            <table className="w-full border-collapse" style={{ minWidth: '860px' }}>
+            <table className="w-full border-collapse" style={{ minWidth: '920px' }}>
               <thead>
-                {/* 1행: 날짜 */}
                 <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="w-14 py-2 text-sm text-gray-400 font-medium border-r border-gray-200 sticky left-0 bg-gray-50 z-10" rowSpan={2}>
+                  <th className="w-16 py-3 text-sm text-gray-500 font-semibold border-r border-gray-200 sticky left-0 bg-gray-50 z-10" rowSpan={2}>
                     시간
                   </th>
                   {weekDays.map(day => (
-                    <th key={formatDate(day)} colSpan={3} className="py-2 text-sm font-bold text-gray-800 text-center border-r border-gray-200 last:border-r-0">
+                    <th key={formatDate(day)} colSpan={3} className="py-3 text-base font-bold text-gray-800 text-center border-r border-gray-200 last:border-r-0">
                       {formatDateLabel(day)}
                     </th>
                   ))}
                 </tr>
-                {/* 2행: 상담실 번호 */}
                 <tr className="bg-gray-50 border-b-2 border-gray-300">
                   {weekDays.map(day =>
                     ROOMS.map((room, i) => (
                       <th key={`${formatDate(day)}-${room}`}
-                        className={`py-1 text-xs font-bold text-woohwa-green-dark text-center ${i === 2 ? 'border-r border-gray-200 last:border-r-0' : ''}`}
-                        style={{ minWidth: '52px' }}
+                        className={`py-2 text-sm font-bold text-woohwa-green-dark text-center ${i === 2 ? 'border-r border-gray-200 last:border-r-0' : ''}`}
+                        style={{ minWidth: '58px' }}
                       >
                         {room}호
                       </th>
@@ -117,8 +114,8 @@ export function WeeklyCalendar({ slots, isLoading, weekStart, onWeekChange, onSl
               </thead>
               <tbody>
                 {TIME_SLOTS.map((time, ti) => (
-                  <tr key={time} className={ti % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
-                    <td className={`py-1 px-1 text-xs text-center text-gray-500 border-r border-gray-200 font-medium whitespace-nowrap sticky left-0 z-10 ${ti % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                  <tr key={time} className={ti % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}>
+                    <td className={`py-1 px-1 text-sm text-center text-gray-700 border-r border-gray-200 font-semibold whitespace-nowrap sticky left-0 z-10 ${ti % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
                       {time}
                     </td>
                     {weekDays.map((day, di) =>
