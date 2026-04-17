@@ -1,12 +1,11 @@
-import { GAS_URL } from '../utils/constants'
 import type { ApiResponse } from '../types/api'
 import type { Reservation, BlockedSlot } from '../types/reservation'
 import type { Coach } from '../types/coach'
 
 async function request<T>(action: string, params: Record<string, unknown> = {}): Promise<T> {
-  const res = await fetch(GAS_URL, {
+  const res = await fetch('/api', {
     method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action, ...params }),
   })
 
