@@ -6,7 +6,7 @@ import type { Coach } from '../types/coach'
 async function request<T>(action: string, params: Record<string, unknown> = {}): Promise<T> {
   const res = await fetch(GAS_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify({ action, ...params }),
   })
 
