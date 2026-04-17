@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 import { useAdminAuth } from './hooks/useAdminAuth'
 import { useReservations } from './hooks/useReservations'
@@ -198,6 +198,23 @@ function UserApp() {
 
 function AdminApp() {
   const { adminSession, isVerifying, error, handleGoogleCallback, logout } = useAdminAuth()
+  const location = useLocation()
+
+  useEffect(() => {
+    const hash = new URLSearchParams(window.location.hash.slice(1))
+    const token = hash.get('access_token')
+    if (!token || adminSession || isVerifying) return
+
+    fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${token}`)
+      .then(r => r.json())
+      .then((info: { email?: string }) => {
+        if (info.email) {
+          handleGoogleCallback(token, info.email)
+          window.history.replaceState({}, '', '/admin')
+        }
+      })
+      .catch(() => {})
+  }, [location.hash])
 
   if (!adminSession) {
     return (
