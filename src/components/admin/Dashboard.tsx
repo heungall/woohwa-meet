@@ -3,7 +3,9 @@ import type { Reservation } from '../../types/reservation'
 import type { Coach } from '../../types/coach'
 import { adminApi } from '../../services/api'
 import { LoadingSpinner } from '../common/LoadingSpinner'
-import { format, startOfWeek, endOfWeek, isToday, parseISO } from 'date-fns'
+import { format, startOfWeek, endOfWeek, addWeeks, isToday, parseISO } from 'date-fns'
+import type { BlockedSlot } from '../../types/reservation'
+import { TIME_SLOTS, DAYS_OF_WEEK, DAY_LABELS } from '../../utils/constants'
 
 interface DashboardProps {
   token: string
@@ -73,7 +75,7 @@ function ReservationList({ token }: { token: string }) {
     try {
       const now = new Date()
       const from = format(startOfWeek(now, { weekStartsOn: 1 }), 'yyyy-MM-dd')
-      const to = format(endOfWeek(now, { weekStartsOn: 1 }), 'yyyy-MM-dd')
+      const to = format(endOfWeek(addWeeks(now, 1), { weekStartsOn: 1 }), 'yyyy-MM-dd')
       const [res, coachList] = await Promise.all([
         adminApi.getAllReservations(token, from, to),
         adminApi.getCoaches(token),
@@ -121,7 +123,7 @@ function ReservationList({ token }: { token: string }) {
           <p className="text-3xl font-bold text-woohwa-green">{todayCount}건</p>
         </div>
         <div className="bg-white rounded-xl p-4 border border-gray-200">
-          <p className="text-sm text-gray-500">이번주 예약</p>
+          <p className="text-sm text-gray-500">이번주+다음주 예약</p>
           <p className="text-3xl font-bold text-woohwa-green">{active.length}건</p>
         </div>
       </div>
@@ -179,11 +181,132 @@ function ReservationList({ token }: { token: string }) {
   )
 }
 
-function BlockedSlotsManager({ token: _token }: { token: string }) {
+function BlockedSlotsManager({ token }: { token: string }) {
+  const [slots, setSlots] = useState<BlockedSlot[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [showForm, setShowForm] = useState(false)
+  const [form, setForm] = useState({
+    type: 'common' as 'common' | 'weekly',
+    dayOfWeek: 'MON',
+    time: '09:00',
+    room: 'all',
+    reason: '',
+  })
+
+  useEffect(() => {
+    adminApi.getBlockedSlots(token).then(setSlots).finally(() => setIsLoading(false))
+  }, [token])
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const newSlot = await adminApi.createBlockedSlot(token, {
+      type: form.type,
+      dayOfWeek: form.dayOfWeek as BlockedSlot['dayOfWeek'],
+      time: form.time,
+      room: form.room as BlockedSlot['room'],
+      reason: form.reason,
+    })
+    setSlots(prev => [...prev, newSlot])
+    setShowForm(false)
+    setForm({ type: 'common', dayOfWeek: 'MON', time: '09:00', room: 'all', reason: '' })
+  }
+
+  const handleDelete = async (id: string) => {
+    await adminApi.deleteBlockedSlot(token, id)
+    setSlots(prev => prev.filter(s => s.id !== id))
+  }
+
+  if (isLoading) return <LoadingSpinner />
+
   return (
-    <div className="bg-white rounded-xl p-6 border border-gray-200">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">불가시간 관리</h2>
-      <p className="text-base text-gray-500">Apps Script 백엔드 연결 후 활성화됩니다.</p>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold text-gray-900">불가시간 관리</h2>
+        <button
+          onClick={() => setShowForm(true)}
+          className="px-4 py-2 bg-woohwa-green text-white rounded-xl text-base font-medium min-h-touch hover:bg-woohwa-green-dark"
+        >
+          + 불가시간 추가
+        </button>
+      </div>
+
+      {showForm && (
+        <form onSubmit={handleCreate} className="bg-white rounded-xl border-2 border-woohwa-green p-4 space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">유형</label>
+              <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value as 'common' | 'weekly' }))}
+                className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-base focus:border-woohwa-green outline-none">
+                <option value="common">매주 반복</option>
+                <option value="weekly">특정 주만</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">요일</label>
+              <select value={form.dayOfWeek} onChange={e => setForm(f => ({ ...f, dayOfWeek: e.target.value }))}
+                className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-base focus:border-woohwa-green outline-none">
+                {DAYS_OF_WEEK.map(d => <option key={d} value={d}>{DAY_LABELS[d]}요일</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">시간</label>
+              <select value={form.time} onChange={e => setForm(f => ({ ...f, time: e.target.value }))}
+                className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-base focus:border-woohwa-green outline-none">
+                {TIME_SLOTS.map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">상담실</label>
+              <select value={form.room} onChange={e => setForm(f => ({ ...f, room: e.target.value }))}
+                className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-base focus:border-woohwa-green outline-none">
+                <option value="all">전체</option>
+                <option value="1">1호</option>
+                <option value="2">2호</option>
+                <option value="3">3호</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">사유 (선택)</label>
+            <input value={form.reason} onChange={e => setForm(f => ({ ...f, reason: e.target.value }))}
+              placeholder="예: 학교 행사, 정기 점검"
+              className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-base focus:border-woohwa-green outline-none" />
+          </div>
+          <div className="flex gap-2 justify-end">
+            <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 border-2 border-gray-200 rounded-lg text-base">취소</button>
+            <button type="submit" className="px-4 py-2 bg-woohwa-green text-white rounded-lg text-base font-medium">저장</button>
+          </div>
+        </form>
+      )}
+
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr>
+              {['유형', '요일', '시간', '상담실', '사유', ''].map(h => (
+                <th key={h} className="px-4 py-3 text-sm font-medium text-gray-600 text-left border-b border-gray-200">{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {slots.length === 0 && (
+              <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400 text-base">등록된 불가시간이 없습니다</td></tr>
+            )}
+            {slots.map(s => (
+              <tr key={s.id} className="border-b border-gray-100 hover:bg-gray-50">
+                <td className="px-4 py-3 text-base">{s.type === 'common' ? '매주 반복' : '특정 주'}</td>
+                <td className="px-4 py-3 text-base">{DAY_LABELS[s.dayOfWeek]}요일</td>
+                <td className="px-4 py-3 text-base">{s.time}</td>
+                <td className="px-4 py-3 text-base">{s.room === 'all' ? '전체' : `${s.room}호`}</td>
+                <td className="px-4 py-3 text-base text-gray-500">{s.reason || '-'}</td>
+                <td className="px-4 py-3">
+                  <button onClick={() => handleDelete(s.id)} className="text-red-500 hover:text-red-700 text-sm font-medium">삭제</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
