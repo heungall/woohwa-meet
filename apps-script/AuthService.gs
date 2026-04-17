@@ -1,5 +1,11 @@
 // 인증 서비스
 
+function isActive(val) {
+  if (val === true || val === 'TRUE' || val === 'true' || val === 1) return true;
+  if (typeof val === 'string') return val.toLowerCase() === 'true';
+  return false;
+}
+
 function verifyPassword(password) {
   const sheet = getSheet('Settings');
   const rows = sheetToObjects(sheet);
@@ -14,10 +20,10 @@ function getActiveCoaches() {
   const sheet = getSheet('Coaches');
   const rows = sheetToObjects(sheet);
   return rows
-    .filter(r => r.active === true || r.active === 'TRUE')
+    .filter(r => isActive(r.active))
     .map(r => ({
-      id: r.id,
-      name: r.name,
+      id: String(r.id),
+      name: String(r.name),
       active: true,
     }));
 }
@@ -25,14 +31,14 @@ function getActiveCoaches() {
 function selectCoach(coachId, phoneSuffix) {
   const sheet = getSheet('Coaches');
   const rows = sheetToObjects(sheet);
-  const coach = rows.find(r => r.id === coachId && (r.active === true || r.active === 'TRUE'));
+  const coach = rows.find(r => String(r.id) === String(coachId) && isActive(r.active));
   if (!coach) throw new Error('코치를 찾을 수 없습니다.');
 
   // 동명이인 확인
-  const sameNameCoaches = rows.filter(r => r.name === coach.name && (r.active === true || r.active === 'TRUE'));
+  const sameNameCoaches = rows.filter(r => r.name === coach.name && isActive(r.active));
   if (sameNameCoaches.length > 1) {
     if (!phoneSuffix) {
-      return { coach: { id: coach.id, name: coach.name }, requiresPhoneVerification: true };
+      return { coach: { id: String(coach.id), name: coach.name }, requiresPhoneVerification: true };
     }
     const phoneSuffixStr = String(phoneSuffix).trim();
     const phone = String(coach.phone).replace(/[^0-9]/g, '');
@@ -42,7 +48,7 @@ function selectCoach(coachId, phoneSuffix) {
   }
 
   return {
-    coach: { id: coach.id, name: coach.name, lastCarNumber: coach.lastCarNumber || '' },
+    coach: { id: String(coach.id), name: coach.name, lastCarNumber: coach.lastCarNumber || '' },
     requiresPhoneVerification: false,
   };
 }
@@ -51,7 +57,7 @@ function verifyAdminToken(token) {
   if (!token) return null;
   try {
     const response = UrlFetchApp.fetch(
-      `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${token}`
+      'https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=' + token
     );
     const info = JSON.parse(response.getContentText());
     if (info.error) return null;
