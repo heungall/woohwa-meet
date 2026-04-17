@@ -22,7 +22,7 @@ function slotLabel(slot: TimeSlotData, selected: boolean) {
 }
 
 function slotClass(status: TimeSlotData['status'], selected: boolean) {
-  const base = 'w-full h-10 rounded text-xs font-medium transition-all border-2 flex items-center justify-center'
+  const base = 'w-full h-10 rounded text-xs font-medium transition-all border-2 flex items-center justify-center px-1'
   if (selected) return `${base} bg-woohwa-green border-woohwa-green-dark text-white`
   switch (status) {
     case 'available': return `${base} bg-white border-gray-200 hover:border-woohwa-green hover:bg-green-50 cursor-pointer`
@@ -61,7 +61,7 @@ export function WeeklyCalendar({ slots, isLoading, weekStart, onWeekChange, onSl
         <button
           onClick={() => onWeekChange(addWeeks(weekStart, 1))}
           disabled={!canNavigateForward(weekStart)}
-          className="px-4 py-2 rounded-xl border-2 border-gray-200 text-base font-medium min-h-[44px] disabled:cursor-not-allowed hover:border-woohwa-green transition-colors"
+          className="px-4 py-2 rounded-xl border-2 border-gray-200 text-base font-medium min-h-[44px] disabled:opacity-30 disabled:cursor-not-allowed hover:border-woohwa-green transition-colors"
         >
           다음 ▶
         </button>
@@ -85,49 +85,69 @@ export function WeeklyCalendar({ slots, isLoading, weekStart, onWeekChange, onSl
       {isLoading ? (
         <div className="py-12"><LoadingSpinner size="lg" /></div>
       ) : (
-        <div className="flex flex-col gap-3">
-          {weekDays.map(day => {
-            const dateStr = formatDate(day)
-            return (
-              <div key={dateStr} className="bg-white rounded-xl border-2 border-gray-200 overflow-hidden">
-                {/* 날짜 헤더 */}
-                <div className="bg-gray-50 border-b-2 border-gray-200 px-3 py-2 flex items-center justify-between">
-                  <span className="text-base font-bold text-gray-900">{formatDateLabel(day)}</span>
-                  <div className="flex gap-4 text-xs font-bold text-woohwa-green-dark">
-                    {ROOMS.map(room => (
-                      <span key={room} className="w-14 text-center">{room}호</span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 시간대별 행 */}
-                <div className="divide-y divide-gray-100">
-                  {TIME_SLOTS.map((time, ti) => (
-                    <div key={time} className={`flex items-center px-3 py-1 gap-2 ${ti % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
-                      <span className="text-xs text-gray-500 font-medium w-11 shrink-0">{time}</span>
-                      <div className="flex gap-1 flex-1">
-                        {ROOMS.map(room => {
-                          const slot = getSlot(dateStr, time, room)
-                          const selected = isSelected(dateStr, time, room)
-                          return (
+        <div className="bg-white rounded-xl border-2 border-gray-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            {/* 각 호실 열 최소 48px → 한글 3자 충분히 표시 */}
+            <table className="w-full border-collapse" style={{ minWidth: '860px' }}>
+              <thead>
+                {/* 1행: 날짜 */}
+                <tr className="bg-gray-50 border-b border-gray-200">
+                  <th className="w-14 py-2 text-sm text-gray-400 font-medium border-r border-gray-200 sticky left-0 bg-gray-50 z-10" rowSpan={2}>
+                    시간
+                  </th>
+                  {weekDays.map(day => (
+                    <th key={formatDate(day)} colSpan={3} className="py-2 text-sm font-bold text-gray-800 text-center border-r border-gray-200 last:border-r-0">
+                      {formatDateLabel(day)}
+                    </th>
+                  ))}
+                </tr>
+                {/* 2행: 상담실 번호 */}
+                <tr className="bg-gray-50 border-b-2 border-gray-300">
+                  {weekDays.map(day =>
+                    ROOMS.map((room, i) => (
+                      <th key={`${formatDate(day)}-${room}`}
+                        className={`py-1 text-xs font-bold text-woohwa-green-dark text-center ${i === 2 ? 'border-r border-gray-200 last:border-r-0' : ''}`}
+                        style={{ minWidth: '52px' }}
+                      >
+                        {room}호
+                      </th>
+                    ))
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {TIME_SLOTS.map((time, ti) => (
+                  <tr key={time} className={ti % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
+                    <td className={`py-1 px-1 text-xs text-center text-gray-500 border-r border-gray-200 font-medium whitespace-nowrap sticky left-0 z-10 ${ti % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                      {time}
+                    </td>
+                    {weekDays.map((day, di) =>
+                      ROOMS.map((room, ri) => {
+                        const dateStr = formatDate(day)
+                        const slot = getSlot(dateStr, time, room)
+                        const selected = isSelected(dateStr, time, room)
+                        const isLastRoom = ri === 2
+                        return (
+                          <td key={`${dateStr}-${room}`}
+                            className={`p-0.5 ${isLastRoom && di < 4 ? 'border-r border-gray-200' : ''}`}
+                          >
                             <button
-                              key={room}
                               onClick={() => onSlotClick(slot)}
                               disabled={slot.status === 'blocked' || slot.status === 'taken'}
-                              className={`${slotClass(slot.status, selected)} flex-1`}
+                              className={slotClass(slot.status, selected)}
                               title={slot.status === 'taken' ? `${slot.reservation?.name} 예약` : ''}
                             >
                               {slotLabel(slot, selected)}
                             </button>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )
-          })}
+                          </td>
+                        )
+                      })
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
