@@ -54,27 +54,3 @@ create table if not exists access_log (
   coach_id text,
   detail text
 );
-
--- 초기 비밀번호 'woohwa' 해시 저장 (pgcrypto 확장 필요)
--- Supabase는 기본으로 pgcrypto가 활성화되어 있어요
-insert into settings (key, value)
-values (
-  'userPasswordHash',
-  encode(digest('woohwawoohwa_salt_2026', 'sha256'), 'hex')
-)
-on conflict (key) do update set value = encode(digest('woohwawoohwa_salt_2026', 'sha256'), 'hex');
-
-insert into settings (key, value)
-values ('guideContent', '')
-on conflict (key) do nothing;
-
--- 관리자 이메일 등록 (본인 Gmail로 변경)
-insert into admin_list (email, role) values
-  ('your-email@gmail.com', 'admin')
-on conflict (email) do nothing;
-
--- 코치 명단 등록 (실제 데이터로 변경)
-insert into coaches (id, name, phone, active) values
-  ('C001', '이경아', '01071297486', true),
-  ('C002', '장지진', '01041133570', true)
-on conflict (id) do nothing;
