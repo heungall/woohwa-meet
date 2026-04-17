@@ -25,10 +25,14 @@ async function verifyAdminToken(token: string): Promise<string | null> {
   try {
     const r = await fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${token}`)
     const info = await r.json() as { error?: string; email?: string }
+    console.log('[verifyAdmin] tokeninfo:', JSON.stringify(info))
     if (info.error || !info.email) return null
-    const { data } = await supabase.from('admin_list').select('email').eq('email', info.email).single()
+    const email = info.email.toLowerCase().trim()
+    const { data, error } = await supabase.from('admin_list').select('email').ilike('email', email).single()
+    console.log('[verifyAdmin] db result:', JSON.stringify({ data, error }))
     return data?.email ?? null
-  } catch {
+  } catch (e) {
+    console.error('[verifyAdmin] error:', e)
     return null
   }
 }
