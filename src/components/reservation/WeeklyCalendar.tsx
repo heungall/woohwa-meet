@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { addWeeks, subWeeks } from 'date-fns'
 import type { TimeSlotData } from '../../types/reservation'
 import { TIME_SLOTS, ROOMS } from '../../utils/constants'
@@ -14,19 +13,25 @@ interface WeeklyCalendarProps {
   selectedSlots?: Array<{ date: string; time: string; room: 1 | 2 | 3 }>
 }
 
-const STATUS_STYLES: Record<TimeSlotData['status'], string> = {
-  available: 'bg-white border-gray-200 hover:border-woohwa-green hover:bg-green-50 cursor-pointer',
-  mine: 'bg-woohwa-green/20 border-woohwa-green cursor-pointer',
-  taken: 'bg-gray-100 border-gray-200 cursor-default',
-  blocked: 'bg-gray-200 border-gray-300 cursor-default',
+const STATUS_BASE = 'w-full min-h-[44px] rounded-lg border-2 text-xs font-medium transition-all flex items-center justify-center'
+
+function slotStyle(status: TimeSlotData['status'], selected: boolean): string {
+  if (selected) return `${STATUS_BASE} bg-woohwa-green border-woohwa-green-dark text-white`
+  switch (status) {
+    case 'available': return `${STATUS_BASE} bg-white border-gray-200 hover:border-woohwa-green hover:bg-green-50 cursor-pointer`
+    case 'mine':      return `${STATUS_BASE} bg-woohwa-green/20 border-woohwa-green cursor-pointer`
+    case 'taken':     return `${STATUS_BASE} bg-gray-100 border-gray-200 cursor-default`
+    case 'blocked':   return `${STATUS_BASE} bg-gray-200 border-gray-300 cursor-default`
+  }
 }
 
 export function WeeklyCalendar({ slots, isLoading, weekStart, onWeekChange, onSlotClick, selectedSlots = [] }: WeeklyCalendarProps) {
-  const [mobileRoom, setMobileRoom] = useState<1 | 2 | 3>(1)
   const weekDays = getWeekDays(weekStart)
 
-  const getSlot = (date: string, time: string, room: 1 | 2 | 3): TimeSlotData | undefined =>
-    slots.find((s) => s.date === date && s.time === time && s.room === room)
+  const getSlot = (date: string, time: string, room: 1 | 2 | 3): TimeSlotData =>
+    slots.find((s) => s.date === date && s.time === time && s.room === room) ?? {
+      date, time, room, status: 'available',
+    }
 
   const isSelected = (date: string, time: string, room: 1 | 2 | 3): boolean =>
     selectedSlots.some((s) => s.date === date && s.time === time && s.room === room)
@@ -38,7 +43,7 @@ export function WeeklyCalendar({ slots, isLoading, weekStart, onWeekChange, onSl
         <button
           onClick={() => onWeekChange(subWeeks(weekStart, 1))}
           disabled={!canNavigateBack(weekStart)}
-          className="flex items-center gap-1 px-4 py-2 rounded-xl border-2 border-gray-200 text-base font-medium min-h-touch disabled:opacity-30 disabled:cursor-not-allowed hover:border-woohwa-green transition-colors"
+          className="flex items-center gap-1 px-4 py-2 rounded-xl border-2 border-gray-200 text-base font-medium min-h-[44px] disabled:opacity-30 disabled:cursor-not-allowed hover:border-woohwa-green transition-colors"
         >
           ◀ 이전 주
         </button>
@@ -51,14 +56,14 @@ export function WeeklyCalendar({ slots, isLoading, weekStart, onWeekChange, onSl
         <button
           onClick={() => onWeekChange(addWeeks(weekStart, 1))}
           disabled={!canNavigateForward(weekStart)}
-          className="flex items-center gap-1 px-4 py-2 rounded-xl border-2 border-gray-200 text-base font-medium min-h-touch disabled:opacity-30 disabled:cursor-not-allowed hover:border-woohwa-green transition-colors"
+          className="flex items-center gap-1 px-4 py-2 rounded-xl border-2 border-gray-200 text-base font-medium min-h-[44px] disabled:opacity-30 disabled:cursor-not-allowed hover:border-woohwa-green transition-colors"
         >
           다음 주 ▶
         </button>
       </div>
 
       {/* 범례 */}
-      <div className="flex flex-wrap gap-3 mb-4 text-sm">
+      <div className="flex flex-wrap gap-3 mb-5 text-sm">
         {[
           { color: 'bg-white border border-gray-300', label: '예약 가능' },
           { color: 'bg-woohwa-green/20 border border-woohwa-green', label: '내 예약' },
@@ -72,130 +77,68 @@ export function WeeklyCalendar({ slots, isLoading, weekStart, onWeekChange, onSl
         ))}
       </div>
 
-      {isLoading && (
-        <div className="py-12">
-          <LoadingSpinner size="lg" />
+      {isLoading ? (
+        <div className="py-12"><LoadingSpinner size="lg" /></div>
+      ) : (
+        <div className="space-y-4">
+          {weekDays.map((day) => {
+            const dateStr = formatDate(day)
+            return (
+              <div key={dateStr} className="bg-white rounded-xl border-2 border-gray-200 overflow-hidden">
+                {/* 날짜 헤더 */}
+                <div className="bg-gray-50 border-b border-gray-200 px-4 py-2">
+                  <span className="text-base font-bold text-gray-800">{formatDateLabel(day)}</span>
+                </div>
+
+                {/* 상담실 테이블 */}
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[320px]">
+                    <thead>
+                      <tr className="border-b border-gray-100">
+                        <th className="w-16 py-2 text-sm font-medium text-gray-500 text-center border-r border-gray-100">
+                          시간
+                        </th>
+                        {ROOMS.map((room) => (
+                          <th key={room} className="py-2 text-sm font-bold text-woohwa-green-dark text-center">
+                            상담실 {room}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {TIME_SLOTS.map((time) => (
+                        <tr key={time} className="border-b border-gray-50">
+                          <td className="py-1 px-2 text-sm text-center text-gray-500 border-r border-gray-100 font-medium">
+                            {time}
+                          </td>
+                          {ROOMS.map((room) => {
+                            const slot = getSlot(dateStr, time, room)
+                            const selected = isSelected(dateStr, time, room)
+                            return (
+                              <td key={room} className="p-1">
+                                <button
+                                  onClick={() => onSlotClick(slot)}
+                                  disabled={slot.status === 'blocked' || slot.status === 'taken'}
+                                  className={slotStyle(slot.status, selected)}
+                                >
+                                  {slot.status === 'mine' && <span className="text-woohwa-green-dark text-xs">내 예약</span>}
+                                  {slot.status === 'taken' && <span className="text-gray-500 text-xs">{slot.reservation?.name}</span>}
+                                  {slot.status === 'blocked' && <span className="text-gray-400 text-xs">불가</span>}
+                                  {slot.status === 'available' && selected && <span>✓</span>}
+                                </button>
+                              </td>
+                            )
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )
+          })}
         </div>
       )}
-
-      {!isLoading && (
-        <>
-          {/* 모바일: 탭으로 상담실 전환 */}
-          <div className="sm:hidden mb-3">
-            <div className="flex border-2 border-gray-200 rounded-xl overflow-hidden">
-              {ROOMS.map((room) => (
-                <button
-                  key={room}
-                  onClick={() => setMobileRoom(room)}
-                  className={`flex-1 py-3 text-base font-medium min-h-touch transition-colors ${
-                    mobileRoom === room
-                      ? 'bg-woohwa-green text-white'
-                      : 'bg-white text-gray-600 hover:bg-gray-50'
-                  }`}
-                >
-                  상담실 {room}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* PC: 상담실별 3컬럼 / 모바일: 1 상담실 */}
-          <div className="hidden sm:grid sm:grid-cols-3 gap-3">
-            {ROOMS.map((room) => (
-              <RoomColumn
-                key={room}
-                room={room}
-                weekDays={weekDays}
-                getSlot={getSlot}
-                isSelected={isSelected}
-                onSlotClick={onSlotClick}
-              />
-            ))}
-          </div>
-
-          <div className="sm:hidden">
-            <RoomColumn
-              room={mobileRoom}
-              weekDays={weekDays}
-              getSlot={getSlot}
-              isSelected={isSelected}
-              onSlotClick={onSlotClick}
-            />
-          </div>
-        </>
-      )}
-    </div>
-  )
-}
-
-interface RoomColumnProps {
-  room: 1 | 2 | 3
-  weekDays: Date[]
-  getSlot: (date: string, time: string, room: 1 | 2 | 3) => TimeSlotData | undefined
-  isSelected: (date: string, time: string, room: 1 | 2 | 3) => boolean
-  onSlotClick: (slot: TimeSlotData) => void
-}
-
-function RoomColumn({ room, weekDays, getSlot, isSelected, onSlotClick }: RoomColumnProps) {
-  return (
-    <div className="border-2 border-gray-200 rounded-xl overflow-hidden">
-      <div className="bg-woohwa-green text-white text-center py-2 font-bold text-base">
-        상담실 {room}
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[280px]">
-          <thead>
-            <tr className="bg-gray-50">
-              <th className="w-14 py-2 text-sm font-medium text-gray-500 border-b border-r border-gray-200">
-                시간
-              </th>
-              {weekDays.map((day) => (
-                <th key={formatDate(day)} className="py-2 text-sm font-medium text-gray-700 border-b border-gray-200 text-center">
-                  {formatDateLabel(day)}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {TIME_SLOTS.map((time) => (
-              <tr key={time} className="border-b border-gray-100">
-                <td className="py-2 text-sm text-center text-gray-500 border-r border-gray-200 font-medium">
-                  {time}
-                </td>
-                {weekDays.map((day) => {
-                  const dateStr = formatDate(day)
-                  const slot = getSlot(dateStr, time, room) ?? {
-                    date: dateStr,
-                    time,
-                    room,
-                    status: 'available' as const,
-                  }
-                  const selected = isSelected(dateStr, time, room)
-
-                  return (
-                    <td key={dateStr} className="p-1 text-center">
-                      <button
-                        onClick={() => onSlotClick(slot)}
-                        disabled={slot.status === 'blocked' || slot.status === 'taken'}
-                        className={`w-full min-h-[44px] rounded-lg border-2 text-xs font-medium transition-all ${
-                          selected
-                            ? 'bg-woohwa-green border-woohwa-green-dark text-white'
-                            : STATUS_STYLES[slot.status]
-                        }`}
-                      >
-                        {slot.status === 'mine' && <span className="text-woohwa-green-dark">내 예약</span>}
-                        {slot.status === 'taken' && <span className="text-gray-500">{slot.reservation?.name}</span>}
-                        {slot.status === 'blocked' && <span className="text-gray-400">이용불가</span>}
-                        {slot.status === 'available' && selected && <span>✓</span>}
-                      </button>
-                    </td>
-                  )
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
     </div>
   )
 }

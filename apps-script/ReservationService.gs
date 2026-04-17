@@ -36,7 +36,7 @@ function createReservation(coachId, slots, carNumber) {
     const sheet = getSheet('Reservations');
     const coachSheet = getSheet('Coaches');
     const coachRows = sheetToObjects(coachSheet);
-    const coach = coachRows.find(r => r.id === coachId);
+    const coach = coachRows.find(r => String(r.id) === String(coachId));
     if (!coach) throw new Error('코치를 찾을 수 없습니다.');
 
     const existing = sheetToObjects(sheet);
