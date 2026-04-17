@@ -28,9 +28,9 @@ async function verifyAdminToken(token: string): Promise<string | null> {
     console.log('[verifyAdmin] tokeninfo:', JSON.stringify(info))
     if (info.error || !info.email) return null
     const email = info.email.toLowerCase().trim()
-    const { data, error } = await supabase.from('admin_list').select('email').ilike('email', email).single()
+    const { data, error } = await supabase.from('admin_list').select('email').ilike('email', email)
     console.log('[verifyAdmin] db result:', JSON.stringify({ data, error }))
-    return data?.email ?? null
+    return (data && data.length > 0) ? email : null
   } catch (e) {
     console.error('[verifyAdmin] error:', e)
     return null
