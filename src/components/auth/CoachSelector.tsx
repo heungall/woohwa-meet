@@ -35,11 +35,6 @@ export function CoachSelector({
     }
   }
 
-  const handleCoachButton = async (coachId: string) => {
-    setSelectedId(coachId)
-    await onSelect(coachId)
-  }
-
   if (needsPhoneVerification) {
     const coach = coaches.find((c) => c.id === pendingCoachId)
     return (
@@ -103,22 +98,34 @@ export function CoachSelector({
           </div>
         )}
 
-        {isLoading && selectedId ? (
-          <div className="py-8"><LoadingSpinner size="lg" /></div>
-        ) : (
-          <div className="grid grid-cols-2 gap-3">
-            {activeCoaches.map((coach) => (
-              <button
-                key={coach.id}
-                onClick={() => handleCoachButton(coach.id)}
-                disabled={isLoading}
-                className="py-5 px-3 rounded-xl border-2 border-gray-200 text-xl font-bold text-gray-800 hover:border-woohwa-green hover:bg-green-50 hover:text-woohwa-green-dark active:bg-woohwa-green active:text-white transition-colors disabled:opacity-50"
-              >
-                {coach.name}
-              </button>
-            ))}
+        <form onSubmit={handleSelect} className="space-y-5">
+          <div>
+            <label htmlFor="coach" className="block text-lg font-medium text-gray-700 mb-2">
+              이름
+            </label>
+            <select
+              id="coach"
+              value={selectedId}
+              onChange={(e) => setSelectedId(e.target.value)}
+              className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 text-xl focus:outline-none focus:border-woohwa-green appearance-none bg-white"
+            >
+              <option value="">선택해주세요</option>
+              {activeCoaches.map((coach) => (
+                <option key={coach.id} value={coach.id}>
+                  {coach.name}
+                </option>
+              ))}
+            </select>
           </div>
-        )}
+
+          <button
+            type="submit"
+            disabled={isLoading || !selectedId}
+            className="w-full bg-woohwa-green text-white rounded-xl py-5 text-xl font-bold disabled:opacity-50 hover:bg-woohwa-green-dark transition-colors"
+          >
+            {isLoading ? <LoadingSpinner size="sm" /> : '입장하기'}
+          </button>
+        </form>
       </div>
     </div>
   )
