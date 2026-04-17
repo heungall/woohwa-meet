@@ -80,18 +80,18 @@ export function ReservationModal({
 
         <div className="p-6 pt-0 flex items-center justify-between">
           <button
-            onClick={onCancel}
-            disabled={isLoading}
-            className="text-lg text-gray-500 hover:text-gray-700 underline min-h-touch px-2 flex items-center disabled:opacity-50"
-          >
-            취소
-          </button>
-          <button
             onClick={handleConfirm}
             disabled={isLoading}
             className="px-8 py-4 rounded-xl bg-woohwa-green text-white text-lg font-bold min-h-touch hover:bg-woohwa-green-dark transition-colors disabled:opacity-50"
           >
             {isLoading ? <LoadingSpinner size="sm" /> : '예약하기'}
+          </button>
+          <button
+            onClick={onCancel}
+            disabled={isLoading}
+            className="text-lg text-gray-500 hover:text-gray-700 underline min-h-touch px-2 flex items-center disabled:opacity-50"
+          >
+            취소
           </button>
         </div>
       </div>
