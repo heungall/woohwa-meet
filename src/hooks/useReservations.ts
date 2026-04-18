@@ -3,7 +3,7 @@ import type { Reservation, BlockedSlot, TimeSlotData } from '../types/reservatio
 import { reservationApi } from '../services/api'
 import { formatDate, getWeekStart } from '../utils/date'
 import { TIME_SLOTS, ROOMS } from '../utils/constants'
-import { addDays } from 'date-fns'
+import { addDays, addWeeks } from 'date-fns'
 
 interface UseReservationsReturn {
   slots: TimeSlotData[]
@@ -20,7 +20,11 @@ interface UseReservationsReturn {
 }
 
 export function useReservations(coachId: string): UseReservationsReturn {
-  const [weekStart, setWeekStartState] = useState<Date>(() => getWeekStart(new Date()))
+  const [weekStart, setWeekStartState] = useState<Date>(() => {
+    const now = new Date()
+    const base = getWeekStart(now)
+    return now.getDay() === 6 ? addWeeks(base, 1) : base
+  })
   const [reservations, setReservations] = useState<Reservation[]>([])
   const [blockedSlots, setBlockedSlots] = useState<BlockedSlot[]>([])
   const [isLoading, setIsLoading] = useState(false)

@@ -21,8 +21,9 @@ function slotLabel(slot: TimeSlotData, selected: boolean) {
   return ''
 }
 
-function slotClass(status: TimeSlotData['status'], selected: boolean) {
+function slotClass(status: TimeSlotData['status'], selected: boolean, isPast: boolean) {
   const base = 'w-full h-12 rounded text-sm font-semibold transition-all border-2 flex items-center justify-center px-1'
+  if (isPast && status !== 'mine') return `${base} bg-gray-100 border-gray-200 text-gray-300 cursor-default`
   if (selected) return `${base} bg-woohwa-green border-woohwa-green-dark text-white`
   switch (status) {
     case 'available': return `${base} bg-white border-gray-300 hover:border-woohwa-green hover:bg-green-50 cursor-pointer`
@@ -124,14 +125,15 @@ export function WeeklyCalendar({ slots, isLoading, weekStart, onWeekChange, onSl
                         const slot = getSlot(dateStr, time, room)
                         const selected = isSelected(dateStr, time, room)
                         const isLastRoom = ri === 2
+                        const isPast = new Date(`${dateStr}T${time}:00`) < new Date()
                         return (
                           <td key={`${dateStr}-${room}`}
                             className={`p-0.5 ${isLastRoom && di < 4 ? 'border-r border-gray-200' : ''}`}
                           >
                             <button
                               onClick={() => onSlotClick(slot)}
-                              disabled={slot.status === 'blocked' || slot.status === 'taken'}
-                              className={slotClass(slot.status, selected)}
+                              disabled={isPast || slot.status === 'blocked' || slot.status === 'taken'}
+                              className={slotClass(slot.status, selected, isPast)}
                               title={slot.status === 'taken' ? `${slot.reservation?.name} 예약` : ''}
                             >
                               {slotLabel(slot, selected)}

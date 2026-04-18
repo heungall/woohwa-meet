@@ -7,7 +7,6 @@ import { CoachSelector } from './components/auth/CoachSelector'
 import { Layout } from './components/common/Layout'
 import { WeeklyCalendar } from './components/reservation/WeeklyCalendar'
 import { ReservationModal, CancelModal } from './components/reservation/ReservationModal'
-import { GuideTab } from './components/guide/GuideTab'
 import { AdminAuth } from './components/admin/AdminAuth'
 import { Dashboard } from './components/admin/Dashboard'
 import { Toast } from './components/common/Toast'
@@ -24,11 +23,8 @@ export default function App() {
   )
 }
 
-type MainTab = 'reservation' | 'guide'
-
 function UserApp() {
   const { session, coaches, isLoading, error, selectCoach, logout, needsPhoneVerification, pendingCoachId } = useAuth()
-  const [tab, setTab] = useState<MainTab>('reservation')
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [selectedSlots, setSelectedSlots] = useState<Array<{ date: string; time: string; room: 1 | 2 | 3 }>>([])
   const [activeModal, setActiveModal] = useState<'reservation' | 'cancel' | null>(null)
@@ -100,23 +96,7 @@ function UserApp() {
 
   return (
     <Layout coachName={session.name} onLogout={logout}>
-      {/* 탭 */}
-      <div className="flex gap-1 mb-6 bg-white rounded-xl border border-gray-200 p-1">
-        {([['reservation', '📅 예약하기'], ['guide', '🗺️ 길안내']] as const).map(([key, label]) => (
-          <button
-            key={key}
-            onClick={() => setTab(key)}
-            className={`flex-1 py-3 rounded-lg text-base font-medium min-h-touch transition-colors ${
-              tab === key ? 'bg-woohwa-green text-white' : 'text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
-      {tab === 'reservation' && (
-        <>
+      <>
           {selectedSlots.length > 0 && (
             <div className="mb-4 bg-woohwa-green/10 border-2 border-woohwa-green rounded-xl p-4 flex items-center justify-between">
               <span className="text-base font-medium text-woohwa-green-dark">
@@ -147,10 +127,7 @@ function UserApp() {
             onSlotClick={handleSlotClick}
             selectedSlots={selectedSlots}
           />
-        </>
-      )}
-
-      {tab === 'guide' && <GuideTab />}
+      </>
 
       {activeModal === 'reservation' && selectedSlots.length > 0 && (
         <ReservationModal

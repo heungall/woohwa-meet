@@ -59,6 +59,7 @@ export function useAdminAuth(): UseAdminAuthReturn {
     sessionStorage.removeItem(ADMIN_TOKEN_KEY)
     sessionStorage.removeItem(ADMIN_EMAIL_KEY)
     setAdminSession(null)
+    window.location.href = '/'
   }
 
   return { adminSession, isVerifying, error, handleGoogleCallback, logout }

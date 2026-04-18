@@ -12,7 +12,7 @@ interface DashboardProps {
   onLogout: () => void
 }
 
-type TabKey = 'reservations' | 'blocked' | 'coaches' | 'settings'
+type TabKey = 'reservations' | 'blocked' | 'coaches'
 
 export function Dashboard({ token, onLogout }: DashboardProps) {
   const [tab, setTab] = useState<TabKey>('reservations')
@@ -21,7 +21,6 @@ export function Dashboard({ token, onLogout }: DashboardProps) {
     { key: 'reservations', label: '예약 현황' },
     { key: 'blocked', label: '불가시간' },
     { key: 'coaches', label: '코치 관리' },
-    { key: 'settings', label: '설정' },
   ]
 
   return (
@@ -58,7 +57,6 @@ export function Dashboard({ token, onLogout }: DashboardProps) {
         {tab === 'reservations' && <ReservationList token={token} />}
         {tab === 'blocked' && <BlockedSlotsManager token={token} />}
         {tab === 'coaches' && <CoachManager token={token} />}
-        {tab === 'settings' && <SettingsManager token={token} />}
       </div>
     </div>
   )
@@ -420,86 +418,3 @@ function CoachManager({ token }: { token: string }) {
   )
 }
 
-function SettingsManager({ token }: { token: string }) {
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [pwError, setPwError] = useState('')
-  const [pwSuccess, setPwSuccess] = useState(false)
-  const [guideContent, setGuideContent] = useState('')
-  const [guideSuccess, setGuideSuccess] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setPwError('')
-    if (newPassword !== confirmPassword) {
-      setPwError('비밀번호가 일치하지 않습니다.')
-      return
-    }
-    if (newPassword.length < 4) {
-      setPwError('비밀번호는 4자 이상이어야 합니다.')
-      return
-    }
-    setIsLoading(true)
-    try {
-      await adminApi.updatePassword(token, newPassword)
-      setPwSuccess(true)
-      setNewPassword('')
-      setConfirmPassword('')
-    } catch {
-      setPwError('비밀번호 변경에 실패했습니다.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const handleGuideSave = async () => {
-    setIsLoading(true)
-    try {
-      await adminApi.updateGuideContent(token, guideContent)
-      setGuideSuccess(true)
-    } catch {
-      // silently fail
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  return (
-    <div className="space-y-6">
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">공통 비밀번호 변경</h2>
-        <form onSubmit={handlePasswordChange} className="space-y-3">
-          <div>
-            <label className="block text-base font-medium text-gray-700 mb-1">새 비밀번호</label>
-            <input type="text" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-base focus:border-woohwa-green outline-none" />
-          </div>
-          <div>
-            <label className="block text-base font-medium text-gray-700 mb-1">비밀번호 확인</label>
-            <input type="text" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-base focus:border-woohwa-green outline-none" />
-          </div>
-          {pwError && <p className="text-red-500 text-base">{pwError}</p>}
-          {pwSuccess && <p className="text-green-600 text-base">비밀번호가 변경되었습니다.</p>}
-          <button type="submit" disabled={isLoading} className="px-6 py-3 bg-woohwa-green text-white rounded-xl text-base font-medium min-h-touch hover:bg-woohwa-green-dark disabled:opacity-50">
-            변경하기
-          </button>
-        </form>
-      </div>
-
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">길안내 콘텐츠 편집</h2>
-        <textarea
-          value={guideContent}
-          onChange={(e) => setGuideContent(e.target.value)}
-          rows={10}
-          placeholder="길안내 내용을 입력하세요. HTML 태그 사용 가능합니다."
-          className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-base focus:border-woohwa-green outline-none resize-y"
-        />
-        {guideSuccess && <p className="text-green-600 text-base mt-2">저장되었습니다.</p>}
-        <button onClick={handleGuideSave} disabled={isLoading} className="mt-3 px-6 py-3 bg-woohwa-green text-white rounded-xl text-base font-medium min-h-touch hover:bg-woohwa-green-dark disabled:opacity-50">
-          저장하기
-        </button>
-      </div>
-    </div>
-  )
-}
