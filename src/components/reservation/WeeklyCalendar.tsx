@@ -69,16 +69,16 @@ export function WeeklyCalendar({ slots, isLoading, weekStart, onWeekChange, onSl
       </div>
 
       {/* 범례 */}
-      <div className="flex flex-wrap gap-4 mb-5 text-sm">
+      <div className="flex justify-between mb-5">
         {[
           { color: 'bg-white border-2 border-gray-300', label: '예약 가능' },
           { color: 'bg-woohwa-green/30 border-2 border-woohwa-green', label: '내 예약' },
           { color: 'bg-gray-200 border-2 border-gray-300', label: '예약됨' },
           { color: 'bg-gray-300 border-2 border-gray-400', label: '이용 불가' },
         ].map(({ color, label }) => (
-          <div key={label} className="flex items-center gap-2">
-            <div className={`w-5 h-5 rounded ${color}`} />
-            <span className="text-base text-gray-700 font-medium">{label}</span>
+          <div key={label} className="flex items-center gap-1.5">
+            <div className={`w-4 h-4 rounded shrink-0 ${color}`} />
+            <span className="text-sm text-gray-700 font-medium whitespace-nowrap">{label}</span>
           </div>
         ))}
       </div>
