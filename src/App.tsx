@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 import { useAdminAuth } from './hooks/useAdminAuth'
 import { useReservations } from './hooks/useReservations'
-import { PasswordForm } from './components/auth/PasswordForm'
 import { CoachSelector } from './components/auth/CoachSelector'
 import { Layout } from './components/common/Layout'
 import { WeeklyCalendar } from './components/reservation/WeeklyCalendar'
@@ -28,7 +27,7 @@ export default function App() {
 type MainTab = 'reservation' | 'guide'
 
 function UserApp() {
-  const { session, coaches, passwordVerified, isLoading, error, isLocked, lockoutMinutes, remainingAttempts, verifyPassword, selectCoach, logout, needsPhoneVerification, pendingCoachId } = useAuth()
+  const { session, coaches, isLoading, error, selectCoach, logout, needsPhoneVerification, pendingCoachId } = useAuth()
   const [tab, setTab] = useState<MainTab>('reservation')
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [selectedSlots, setSelectedSlots] = useState<Array<{ date: string; time: string; room: 1 | 2 | 3 }>>([])
@@ -39,18 +38,6 @@ function UserApp() {
   const { slots, isLoading: slotsLoading, weekStart, setWeekStart, createReservation, cancelReservation } = useReservations(session?.coachId ?? '')
 
   if (!session?.authenticated) {
-    if (!passwordVerified) {
-      return (
-        <PasswordForm
-          onSubmit={verifyPassword}
-          isLoading={isLoading}
-          error={error}
-          isLocked={isLocked}
-          lockoutMinutes={lockoutMinutes}
-          remainingAttempts={remainingAttempts}
-        />
-      )
-    }
     return (
       <CoachSelector
         coaches={coaches}
