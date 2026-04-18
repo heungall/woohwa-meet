@@ -256,15 +256,15 @@ function BlockedSlotsManager({ token }: { token: string }) {
               <label className="block text-sm font-medium text-gray-700 mb-1">유형</label>
               <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value as 'common' | 'weekly' }))}
                 className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-base focus:border-woohwa-green outline-none">
-                <option value="common">매주 반복</option>
-                <option value="weekly">특정 주만</option>
+                <option value="common">반복</option>
+                <option value="weekly">일회</option>
               </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">요일</label>
               <select value={form.dayOfWeek} onChange={e => setForm(f => ({ ...f, dayOfWeek: e.target.value }))}
                 className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-base focus:border-woohwa-green outline-none">
-                {DAYS_OF_WEEK.map(d => <option key={d} value={d}>{DAY_LABELS[d]}요일</option>)}
+                {DAYS_OF_WEEK.map(d => <option key={d} value={d}>{DAY_LABELS[d]}</option>)}
               </select>
             </div>
             <div>
@@ -313,8 +313,8 @@ function BlockedSlotsManager({ token }: { token: string }) {
             )}
             {slots.map(s => (
               <tr key={s.id} className="border-b border-gray-100 hover:bg-gray-50">
-                <td className="px-4 py-3 text-base">{s.type === 'common' ? '매주 반복' : '특정 주'}</td>
-                <td className="px-4 py-3 text-base">{DAY_LABELS[s.dayOfWeek]}요일</td>
+                <td className="px-4 py-3 text-base">{s.type === 'common' ? '반복' : '일회'}</td>
+                <td className="px-4 py-3 text-base">{DAY_LABELS[s.dayOfWeek]}</td>
                 <td className="px-4 py-3 text-base">{s.time}</td>
                 <td className="px-4 py-3 text-base">{s.room === 'all' ? '전체' : `${s.room}호`}</td>
                 <td className="px-4 py-3 text-base text-gray-500">{s.reason || '-'}</td>
