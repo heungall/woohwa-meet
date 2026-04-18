@@ -393,7 +393,7 @@ function CoachManager({ token }: { token: string }) {
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              {['이름', '연락처', '차량번호', '상태'].map((h) => (
+              {['이름', '차량번호', '상태'].map((h) => (
                 <th key={h} className="px-4 py-3 text-sm font-medium text-gray-600 text-left border-b border-gray-200">{h}</th>
               ))}
             </tr>
@@ -402,7 +402,6 @@ function CoachManager({ token }: { token: string }) {
             {coaches.map((c) => (
               <tr key={c.id} className="border-b border-gray-100">
                 <td className="px-4 py-3 text-base font-medium">{c.name}</td>
-                <td className="px-4 py-3 text-base">{c.phone}</td>
                 <td className="px-4 py-3 text-base">{c.lastCarNumber ?? '-'}</td>
                 <td className="px-4 py-3">
                   <button
