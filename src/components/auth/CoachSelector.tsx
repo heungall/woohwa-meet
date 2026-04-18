@@ -133,6 +133,15 @@ export function CoachSelector({
             {isLoading ? <LoadingSpinner size="sm" /> : '입장하기'}
           </button>
         </form>
+
+        <div className="mt-6 text-center">
+          <a
+            href="/admin"
+            className="text-base text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            관리자 로그인
+          </a>
+        </div>
       </div>
     </div>
   )
