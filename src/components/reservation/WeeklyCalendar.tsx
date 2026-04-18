@@ -87,15 +87,15 @@ export function WeeklyCalendar({ slots, isLoading, weekStart, onWeekChange, onSl
         <div className="py-12"><LoadingSpinner size="lg" /></div>
       ) : (
         <div className="bg-white rounded-xl border-2 border-gray-200 overflow-hidden">
-          <div className="overflow-x-auto">
+          <div className="overflow-auto max-h-[62vh]">
             <table className="w-full border-collapse" style={{ minWidth: '920px' }}>
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="w-16 py-3 text-sm text-gray-500 font-semibold border-r border-gray-200 sticky left-0 bg-gray-50 z-10" rowSpan={2}>
+                  <th className="w-16 py-3 text-sm text-gray-500 font-semibold border-r border-gray-200 sticky left-0 top-0 bg-gray-50 z-30" rowSpan={2}>
                     시간
                   </th>
                   {weekDays.map(day => (
-                    <th key={formatDate(day)} colSpan={3} className="py-3 text-base font-bold text-gray-800 text-center border-r border-gray-200 last:border-r-0">
+                    <th key={formatDate(day)} colSpan={3} className="py-3 text-base font-bold text-gray-800 text-center border-r border-gray-200 last:border-r-0 sticky top-0 bg-gray-50 z-20">
                       {formatDateLabel(day)}
                     </th>
                   ))}
@@ -104,7 +104,7 @@ export function WeeklyCalendar({ slots, isLoading, weekStart, onWeekChange, onSl
                   {weekDays.map(day =>
                     ROOMS.map((room, i) => (
                       <th key={`${formatDate(day)}-${room}`}
-                        className={`py-2 text-sm font-bold text-woohwa-green-dark text-center ${i === 2 ? 'border-r border-gray-200 last:border-r-0' : ''}`}
+                        className={`py-2 text-sm font-bold text-woohwa-green-dark text-center sticky top-[44px] bg-gray-50 z-20 ${i === 2 ? 'border-r border-gray-200 last:border-r-0' : ''}`}
                         style={{ minWidth: '58px' }}
                       >
                         {room}호
