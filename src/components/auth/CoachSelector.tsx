@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Coach } from '../../types/coach'
 import { LoadingSpinner } from '../common/LoadingSpinner'
+import { Footer } from '../common/Footer'
 
 interface CoachSelectorProps {
   coaches: Coach[]
@@ -10,6 +11,7 @@ interface CoachSelectorProps {
   needsPhoneVerification: boolean
   pendingCoachId: string | null
 }
+
 
 export function CoachSelector({
   coaches,
@@ -38,7 +40,7 @@ export function CoachSelector({
   if (needsPhoneVerification) {
     const coach = coaches.find((c) => c.id === pendingCoachId)
     return (
-      <div className="min-h-screen bg-woohwa-cream flex items-center justify-center px-4">
+      <div className="min-h-screen bg-woohwa-cream flex flex-col items-center justify-center px-4">
         <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-8">
           <div className="text-center mb-6">
             <div className="text-4xl mb-3">🔍</div>
@@ -79,12 +81,13 @@ export function CoachSelector({
             </button>
           </form>
         </div>
+        <Footer />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-woohwa-cream flex items-center justify-center px-4">
+    <div className="min-h-screen bg-woohwa-cream flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-8">
         <div className="text-center mb-6">
           <div className="text-4xl mb-3">👤</div>
@@ -143,6 +146,7 @@ export function CoachSelector({
           </a>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

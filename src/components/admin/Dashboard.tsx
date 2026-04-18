@@ -3,6 +3,7 @@ import type { Reservation } from '../../types/reservation'
 import type { Coach } from '../../types/coach'
 import { adminApi } from '../../services/api'
 import { LoadingSpinner } from '../common/LoadingSpinner'
+import { Footer } from '../common/Footer'
 import { format, startOfWeek, endOfWeek, addWeeks, isToday, parseISO } from 'date-fns'
 import type { BlockedSlot } from '../../types/reservation'
 import { TIME_SLOTS, DAYS_OF_WEEK, DAY_LABELS } from '../../utils/constants'
@@ -24,7 +25,7 @@ export function Dashboard({ token, onLogout }: DashboardProps) {
   ]
 
   return (
-    <div className="min-h-screen bg-woohwa-cream">
+    <div className="min-h-screen bg-woohwa-cream flex flex-col">
       <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-2xl">🦋</span>
@@ -53,11 +54,12 @@ export function Dashboard({ token, onLogout }: DashboardProps) {
         </nav>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 py-6">
+      <div className="max-w-5xl mx-auto px-4 py-6 flex-1 w-full">
         {tab === 'reservations' && <ReservationList token={token} />}
         {tab === 'blocked' && <BlockedSlotsManager token={token} />}
         {tab === 'coaches' && <CoachManager token={token} />}
       </div>
+      <Footer />
     </div>
   )
 }
