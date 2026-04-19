@@ -6,7 +6,7 @@ export function getWeekStart(date: Date): Date {
 }
 
 export function getWeekDays(weekStart: Date): Date[] {
-  return Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
+  return Array.from({ length: 5 }, (_, i) => addDays(weekStart, i))
 }
 
 export function formatDate(date: Date): string {
@@ -18,7 +18,7 @@ export function formatDateLabel(date: Date): string {
 }
 
 export function formatWeekRange(weekStart: Date): string {
-  const weekEnd = addDays(weekStart, 6)
+  const weekEnd = addDays(weekStart, 4)
   return `${format(weekStart, 'M월 d일')} ~ ${format(weekEnd, 'M월 d일')}`
 }
 

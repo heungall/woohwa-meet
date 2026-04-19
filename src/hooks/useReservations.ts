@@ -112,7 +112,7 @@ function buildSlots(
 
   const dayMap: Record<string, string> = { 0: 'SUN', 1: 'MON', 2: 'TUE', 3: 'WED', 4: 'THU', 5: 'FRI', 6: 'SAT' }
 
-  for (let d = 0; d < 7; d++) {
+  for (let d = 0; d < 5; d++) {
     const day = addDays(weekStart, d)
     const dateStr = formatDate(day)
     const dayOfWeek = dayMap[day.getDay()]
