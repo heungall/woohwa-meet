@@ -23,9 +23,8 @@ export function PasswordForm({ onSubmit, isLoading, error, isLocked, lockoutMinu
     <div className="min-h-screen bg-woohwa-cream flex items-center justify-center px-4">
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-8">
         <div className="text-center mb-8">
-          <div className="text-5xl mb-3">🦋</div>
-          <h1 className="text-3xl font-bold text-gray-900">WOOHWA</h1>
-          <p className="text-lg text-gray-500 mt-1">상담실 예약 시스템</p>
+          <img src="/logo.png" alt="WOOHWA" className="mx-auto mb-2 w-48" />
+          <p className="text-lg text-gray-500">상담실 예약 시스템</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
