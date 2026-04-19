@@ -6,7 +6,7 @@ export const TIME_SLOTS = [
 
 export const ROOMS = [1, 2, 3] as const
 
-export const DAYS_OF_WEEK = ['MON', 'TUE', 'WED', 'THU', 'FRI'] as const
+export const DAYS_OF_WEEK = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'] as const
 
 export const DAY_LABELS: Record<string, string> = {
   MON: '월',
@@ -14,6 +14,8 @@ export const DAY_LABELS: Record<string, string> = {
   WED: '수',
   THU: '목',
   FRI: '금',
+  SAT: '토',
+  SUN: '일',
 }
 
 export const MAX_FUTURE_WEEKS = 4

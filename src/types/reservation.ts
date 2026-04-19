@@ -15,7 +15,7 @@ export interface BlockedSlot {
   id: string
   type: 'common' | 'weekly'
   weekStartDate?: string
-  dayOfWeek: 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI'
+  dayOfWeek: 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT' | 'SUN'
   time: string
   room: 1 | 2 | 3 | 'all'
   reason?: string

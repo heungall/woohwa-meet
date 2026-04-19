@@ -23,7 +23,8 @@ export function useReservations(coachId: string): UseReservationsReturn {
   const [weekStart, setWeekStartState] = useState<Date>(() => {
     const now = new Date()
     const base = getWeekStart(now)
-    return now.getDay() === 6 ? addWeeks(base, 1) : base
+    const day = now.getDay()
+    return (day === 6 || day === 0 || day === 1) ? addWeeks(base, 1) : base
   })
   const [reservations, setReservations] = useState<Reservation[]>([])
   const [blockedSlots, setBlockedSlots] = useState<BlockedSlot[]>([])

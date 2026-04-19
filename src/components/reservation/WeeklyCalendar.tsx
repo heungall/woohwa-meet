@@ -88,7 +88,7 @@ export function WeeklyCalendar({ slots, isLoading, weekStart, onWeekChange, onSl
       ) : (
         <div className="bg-white rounded-xl border-2 border-gray-200 overflow-hidden">
           <div className="overflow-auto max-h-[62vh]">
-            <table className="w-full border-collapse" style={{ minWidth: '920px' }}>
+            <table className="w-full border-collapse" style={{ minWidth: '1260px' }}>
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200">
                   <th className="w-16 py-3 text-sm text-gray-500 font-semibold border-r border-gray-200 sticky left-0 top-0 bg-gray-50 z-30" rowSpan={2}>
@@ -128,7 +128,7 @@ export function WeeklyCalendar({ slots, isLoading, weekStart, onWeekChange, onSl
                         const isPast = new Date(`${dateStr}T${time}:00`) < new Date()
                         return (
                           <td key={`${dateStr}-${room}`}
-                            className={`p-0.5 ${isLastRoom && di < 4 ? 'border-r border-gray-200' : ''}`}
+                            className={`p-0.5 ${isLastRoom && di < 6 ? 'border-r border-gray-200' : ''}`}
                           >
                             <button
                               onClick={() => onSlotClick(slot)}

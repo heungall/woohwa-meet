@@ -6,7 +6,7 @@ export function getWeekStart(date: Date): Date {
 }
 
 export function getWeekDays(weekStart: Date): Date[] {
-  return Array.from({ length: 5 }, (_, i) => addDays(weekStart, i))
+  return Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
 }
 
 export function formatDate(date: Date): string {
@@ -18,7 +18,7 @@ export function formatDateLabel(date: Date): string {
 }
 
 export function formatWeekRange(weekStart: Date): string {
-  const weekEnd = addDays(weekStart, 4)
+  const weekEnd = addDays(weekStart, 6)
   return `${format(weekStart, 'M월 d일')} ~ ${format(weekEnd, 'M월 d일')}`
 }
 
@@ -44,7 +44,7 @@ export function isCancelable(date: string, time: string): boolean {
   return isBefore(new Date(), deadline)
 }
 
-export function getDayOfWeek(date: Date): 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' {
+export function getDayOfWeek(date: Date): 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT' | 'SUN' {
   const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
-  return days[date.getDay()] as 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI'
+  return days[date.getDay()] as 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT' | 'SUN'
 }
