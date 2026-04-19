@@ -23,7 +23,7 @@ export function PasswordForm({ onSubmit, isLoading, error, isLocked, lockoutMinu
     <div className="min-h-screen bg-woohwa-cream flex items-center justify-center px-4">
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-8">
         <div className="text-center mb-8">
-          <img src="/logo.png" alt="WOOHWA" className="mx-auto mb-2 w-48" />
+          <img src="/logo.png" alt="WOOHWA" className="mx-auto mb-2 w-full" />
           <p className="text-lg text-gray-500">상담실 예약 시스템</p>
         </div>
 
