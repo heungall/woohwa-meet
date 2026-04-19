@@ -90,9 +90,8 @@ export function CoachSelector({
     <div className="min-h-screen bg-woohwa-cream flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-8">
         <div className="text-center mb-6">
-          <div className="text-4xl mb-3">🦋</div>
-          <h2 className="text-2xl font-bold text-gray-900">WOOHWA</h2>
-          <p className="text-lg text-gray-500 mt-2">본인 이름을 눌러주세요</p>
+          <img src="/logo.png" alt="WOOHWA" className="mx-auto mb-2 w-48" />
+          <p className="text-lg text-gray-500">본인 이름을 눌러주세요</p>
         </div>
 
         {error && (
