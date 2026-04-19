@@ -23,8 +23,7 @@ export function useReservations(coachId: string): UseReservationsReturn {
   const [weekStart, setWeekStartState] = useState<Date>(() => {
     const now = new Date()
     const base = getWeekStart(now)
-    const day = now.getDay()
-    return (day === 6 || day === 0 || day === 1) ? addWeeks(base, 1) : base
+    return now.getDay() === 1 ? addWeeks(base, 1) : base
   })
   const [reservations, setReservations] = useState<Reservation[]>([])
   const [blockedSlots, setBlockedSlots] = useState<BlockedSlot[]>([])
@@ -113,7 +112,7 @@ function buildSlots(
 
   const dayMap: Record<string, string> = { 0: 'SUN', 1: 'MON', 2: 'TUE', 3: 'WED', 4: 'THU', 5: 'FRI', 6: 'SAT' }
 
-  for (let d = 0; d < 5; d++) {
+  for (let d = 0; d < 7; d++) {
     const day = addDays(weekStart, d)
     const dateStr = formatDate(day)
     const dayOfWeek = dayMap[day.getDay()]
@@ -125,8 +124,15 @@ function buildSlots(
         (b.type === 'weekly' && b.weekStartDate === formatDate(weekStart))
       if (!isWeeklyMatch) return
 
-      TIME_SLOTS.forEach((time) => {
-        if (b.time !== time) return
+      const bIdx = TIME_SLOTS.indexOf(b.time as typeof TIME_SLOTS[number])
+      if (bIdx === -1) return
+      const expandedTimes = [
+        TIME_SLOTS[bIdx - 1],
+        TIME_SLOTS[bIdx],
+        TIME_SLOTS[bIdx + 1],
+      ].filter(Boolean) as string[]
+
+      expandedTimes.forEach((time) => {
         if (b.room === 'all') {
           ROOMS.forEach((room) => blockedSet.add(`${dateStr}_${time}_${room}`))
         } else {
