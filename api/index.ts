@@ -88,10 +88,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const weekStart = String(p.weekStart ?? '')
         const coachId = String(p.coachId ?? '')
         const dates: string[] = []
-        const base = new Date(weekStart + 'T00:00:00+09:00')
+        const [y, m, day] = weekStart.split('-').map(Number)
         for (let i = 0; i < 5; i++) {
-          const d = new Date(base)
-          d.setDate(d.getDate() + i)
+          const d = new Date(Date.UTC(y, m - 1, day + i))
           dates.push(d.toISOString().split('T')[0])
         }
         const { data } = await supabase.from('reservations').select('*').in('date', dates).eq('status', 'active')
